@@ -31,6 +31,7 @@
   (expand-file-name "cmake-build-options.el" user-emacs-directory)
   "Path to file storing local cmake-build settings, such as options
 passed to cmake, and the current config."
+  :type 'file
   :group 'cmake-build)
 
 (defcustom cmake-build-run-window-autoswitch t
@@ -261,7 +262,7 @@ use Projectile to determine the root on a buffer-local basis, instead.")
 
 (defun cmake-build--validate (&optional tag)
   (not
-   (case (cmake-build--validity)
+   (cl-case (cmake-build--validity)
      (:build-dir-missing
       (message "cmake-build %s: No build dir (%s)\nDo you need to initialize CMake?"
                (or tag "compile")
@@ -400,7 +401,7 @@ use Projectile to determine the root on a buffer-local basis, instead.")
     t))
 
 (defun cmake-build--display-buffer (name &optional other-name)
-  (case cmake-build-display-type
+  (cl-case cmake-build-display-type
     (split (cmake-build--split-to-buffer name other-name))
     (frame (cmake-build--popup-buffer name other-name))))
 
@@ -770,7 +771,7 @@ use Projectile to determine the root on a buffer-local basis, instead.")
    `(keymap "CMake Build: Settings" ,@(cmake-build--menu-settings))))
 
 (defun cmake-build--menu-action-dispatch (action)
-  (case (car action)
+  (cl-case (car action)
     (:info (message "Project root: %s" (cmake-build--project-root)))
     (:debug (cmake-build-debug))
     (:build (cmake-build-current))
