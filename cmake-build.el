@@ -625,12 +625,22 @@ path, command, and arguments for a particular run.")
 
 (defun cmake-build-run-cmake ()
   (interactive)
-  (cmake-build--save-project-root ()
-    (let* ((default-directory (cmake-build--get-build-dir))
-           (buffer-name (cmake-build--build-buffer-name))
-           (other-buffer-name (cmake-build--run-buffer-name)))
-      (cmake-build--compile buffer-name "cmake ."
-                          :other-buffer-name other-buffer-name))))
+  (let ((build-dir (cmake-build--get-build-dir)))
+    (unless (file-exists-p build-dir)
+      (make-directory build-dir t))
+    (cmake-build--save-project-root ()
+      (let* ((default-directory (cmake-build--get-build-dir))
+             (buffer-name (cmake-build--build-buffer-name))
+             (other-buffer-name (cmake-build--run-buffer-name))
+             (command (concat "cmake " (cmake-build--get-cmake-options)
+                              (when cmake-build-export-compile-commands " -DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
+                              " " (car (cmake-build--get-profile))
+                              " " (cmake-build--maybe-remote-project-root))))
+        (cmake-build--compile buffer-name command
+                              :other-buffer-name other-buffer-name)
+        (when cmake-build-export-compile-commands
+          (cmake-build--create-compile-commands-symlink))))))
+
 
 (defun cmake-build--create-compile-commands-symlink ()
   (let ((filename (expand-file-name "compile_commands.json" (cmake-build--project-root))))
@@ -653,7 +663,12 @@ path, command, and arguments for a particular run.")
                               " " (car (cmake-build--get-profile))
                               " " (cmake-build--maybe-remote-project-root))))
         (when (file-exists-p "CMakeCache.txt")
+          (message "delete CMakeCache.txt")
           (delete-file "CMakeCache.txt"))
+        (when (file-directory-p "CMakeFiles")
+          (message "delete CMakeFiles")
+          (delete-directory "CMakeFiles" 't))
+
         (cmake-build--compile buffer-name command
                               :other-buffer-name other-buffer-name)
         (when cmake-build-export-compile-commands
