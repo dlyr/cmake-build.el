@@ -279,7 +279,7 @@ path, command, and arguments for a particular run.")
   (let ((default-directory (cmake-build--project-root)))
     (projectile-project-name)))
 
-(defun cmake-build--build-buffer-name (&optional name)
+(defun cmake-build--build-buffer-name ()
   (concat "*Build " (cmake-build-project-name) "/" (symbol-name cmake-build-profile) ": " (symbol-name (cmake-build-get-run-config-name)) "*"))
 
 (defun cmake-build--run-buffer-name ()
@@ -393,7 +393,6 @@ path, command, and arguments for a particular run.")
 
 (defun cmake-build--popup-buffer (name other-name)
   (let* ((buffer (get-buffer-create name))
-         (current-buffer-window (get-buffer-window buffer t))
          (other-buffer-window (and other-name (get-buffer-window other-name t)))
          (buffer-config-name (cmake-build-get-run-config-name)))
     (unless (cmake-build--switch-to-buffer buffer (get-buffer-window buffer t) other-buffer-window)
@@ -529,7 +528,7 @@ path, command, and arguments for a particular run.")
            (lambda (process event)
              (let* ((this-root this-root)
                     (cmake-build-project-root this-root))
-               (when (equalp "finished\n" event)
+               (when (cl-equalp "finished\n" event)
                  (cmake-build--invoke-run this-run-config)))))
         (cmake-build--invoke-run this-run-config)))))
 
@@ -598,7 +597,7 @@ path, command, and arguments for a particular run.")
    (list
     (let* ((default-directory (cmake-build--build-root)))
       (read-directory-name "CMake Build build root (blank to unset): "))))
-  (if (equalp "" path)
+  (if (cl-equalp "" path)
       (progn
         (message "Build root reset to default")
         (cmake-build--set-build-root nil))
@@ -651,8 +650,6 @@ path, command, and arguments for a particular run.")
              (other-buffer-name (cmake-build--run-buffer-name))
              (command (concat "cmake " (cmake-build--get-cmake-options)
                               (when cmake-build-export-compile-commands " -DCMAKE_EXPORT_COMPILE_COMMANDS=ON")
-                              ;;                              " -G\"CodeBlocks - Unix Makefiles\"" ;; For rt-run
-                              ;;                              " -G\"CodeBlocks - Ninja\"" ;; For rt-run
                               " " (car (cmake-build--get-profile))
                               " " (cmake-build--maybe-remote-project-root))))
         (when (file-exists-p "CMakeCache.txt")
