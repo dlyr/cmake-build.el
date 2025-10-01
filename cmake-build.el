@@ -114,7 +114,8 @@ default, the name is in the form `build.<profile>`."
   :group 'cmake-build)
 
 (defcustom cmake-build-export-compile-commands nil
-  "Ask cmake to generate compile_commands.json and to create a symlink in project-root."
+  "Ask cmake to generate compile_commands.json
+   and create a symlink in project-root."
   :type 'boolean
   :group 'cmake-build)
 
@@ -134,8 +135,9 @@ default, the name is in the form `build.<profile>`."
 path, command, and arguments for a particular run.")
 
 (defvar cmake-build-project-root nil
-  "Optionally, set this to the emacs-wide root of the current project.  Setting this to NIL will
-use Projectile to determine the root on a buffer-local basis, instead.")
+  "Optionally, set this to the emacs-wide root of the current project.
+ Setting this to NIL will use Projectile to determine the root
+ on a buffer-local basis, instead.")
 
 (defvar cmake-build-build-roots nil
   "This is an alist of build roots per-project, for out-of-source building.")
