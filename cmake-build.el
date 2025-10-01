@@ -144,6 +144,28 @@ path, command, and arguments for a particular run.")
 
 (defvar cmake-build-run-keymap (make-sparse-keymap))
 
+(defun cmake-build--print-variable(var)
+  (message "cmake-build %s: %s" var (eval var))
+  )
+
+(defun cmake-build-print-project-infos ()
+  (interactive)
+  (message "*** cmake-build project variables ***")
+  (cmake-build--print-variable 'cmake-build-profile)
+  (cmake-build--print-variable 'cmake-build-options)
+  (cmake-build--print-variable 'cmake-build-tool-options)
+  (cmake-build--print-variable 'cmake-build-run-config)
+  (cmake-build--print-variable 'cmake-build-project-root)
+  (message "*** cmake-build project configuration ***")
+  (cmake-build--project-root)
+  (if (cmake-build--project-root)
+      (message "cmake-build--project-root: %s" (cmake-build--project-root))
+    (message "cmake-build--project-root: nil"))
+  (if (cmake-build--get-build-dir)   
+      (message "cmake-build--get-build-dir: %s" (cmake-build--get-build-dir))
+    (message "cmake-build--get-build-dir: nil"))
+  (message "*** end cmake-build project information ***"))
+
 (defun cmake-build-quit-window ()
   (interactive)
   (when (and cmake-build-quit-kills-process
