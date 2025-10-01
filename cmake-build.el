@@ -273,7 +273,7 @@ path, command, and arguments for a particular run.")
           config)))
 
 (defun cmake-build--set-build-root (path)
-  (when (cmake-build--build-root)
+  (when (cmake-build--project-root)
     (setf (alist-get (intern (cmake-build--project-root)) cmake-build-build-roots)
           path)))
 
@@ -354,8 +354,9 @@ path, command, and arguments for a particular run.")
   (cdr (assoc 'cmake-build-other-targets (cmake-build--get-project-data))))
 
 (defun cmake-build--build-root ()
+  (when (cmake-build--project-root)
   (or (cdr (assoc (intern (cmake-build--project-root)) cmake-build-build-roots))
-      (cmake-build--project-root)))
+      (cmake-build--project-root))))
 
 (defun cmake-build--source-root ()
   (cadr (assoc 'cmake-build-source-root (cmake-build--get-project-data))))
@@ -364,11 +365,12 @@ path, command, and arguments for a particular run.")
   (concat "build." profile))
 
 (defun cmake-build--get-build-dir (&optional subdir)
-  (concat (cmake-build--build-root)
-          (funcall cmake-build-dir-name-function
-                   (cmake-build--project-root)
-                   (symbol-name cmake-build-profile))
-          "/" (or subdir "")))
+  (when (cmake-build--build-root)
+    (concat (cmake-build--build-root)
+            (funcall cmake-build-dir-name-function
+                     (cmake-build--project-root)
+                     (symbol-name cmake-build-profile))
+            "/" (or subdir ""))))
 
 (defun cmake-build--check-build-dir ()
   (let ((path (cmake-build--get-build-dir)))
@@ -695,6 +697,7 @@ path, command, and arguments for a particular run.")
                               :other-buffer-name other-buffer-name)
         (when cmake-build-export-compile-commands
           (cmake-build--create-compile-commands-symlink))))))
+
 
 (defun cmake-build-clean ()
   (interactive)
