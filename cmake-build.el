@@ -1,11 +1,13 @@
-;;; -*- lexical-binding: t; -*-
-;;; cmake-build.el --- Handle cmake build profiles and target/run configurations for projects
+;;; cmake-build.el --- Handle cmake build profiles and target/run configurations for projects -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2019-2020  Ryan Pavlik
 
 ;; Author: Ryan Pavlik <rpavlik@gmail.com>
 ;; URL: https://github.com/rpav/cmake-build.el
 ;; Version: 1.0
+;; Package-Requires: ((cl-lib "1.0")(tramp "1.0"))
+
+;; 2025 dlyr
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
